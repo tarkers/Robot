@@ -1,0 +1,23 @@
+:root {
+  --dark: #080808;
+  --white: #ffffff;
+}
+label,p{
+  color: white;
+  font-weight: 300;
+  font-family: 'Alatsi';
+}
+html {
+  height: 100%;
+}
+body { background-color: var(--dark); 
+  min-height: 100%;}
+.center-screen {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+.full-height {
+  height: 100%;
+}
