@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap4_5.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='js/responsive_voice.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/speak.js') }}"></script>
+    <title>{{artist}} - {{song}}</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <button class="btn btn-dark" onclick='$("#control_div").toggle();'>TG</button>
+        <div class="row">
+            <div class="col-2 text-center ">
+                <div id="control_div">
+                    <input id="speak">
+                    <input id="count" value={{queue_len}}>
+                    <button id="xxx">暫停</button>
+                    <button id="interval-btn">cal</button>
+                    <button id="speakb">換首</button>
+                    <button id="opd">下一首</button>
+                </div>
+            </div>
+            <div class="col-8 text-center">
+                <img id="albumimg" src="{{ albumimg }}" class="rounded  img-thumbnail  mx-auto" alt="albumpic"
+                    style="width: 550px; margin-top: 10%;">
+                <video id="videoplayer" class="text-center" muted preload="auto" width="100%"
+                    style=" margin-top: 45px; display:none; max-height:80vh">
+                    <source src="{{videourl}}">
+                    <track label="English" kind="captions" srclang="en" default>
+                </video>
+                <div name='inform_div' class="p-4">
+                    <p name="song" class=" mb-3" style="font-size: 30px;" >{{ song }}</p>
+                    <p name="album">專輯: {{ album }}</p>
+                    <p name="artist">演出者: {{ artist }}</p>
+                </div>
+
+            </div>
+            <div class="col-2 text-center">
+            </div>
+        </div>
+    </div>
+    <audio id="audioplayer">
+        <source src="{{ musicurl }}" type="audio/webm">
+    </audio>
+    <script> 
+        
+        $(document).ready(function () {
+            preload_songs(parseInt('{{queue_len}}'))
+            audioplayer = document.getElementById("audioplayer");
+            videoplayer = document.getElementById("videoplayer");
+            interval_btn = document.getElementById("interval-btn");
+            interval_btn.onclick =interval_func
+            audioplayer.volume = 0.5
+            audioplayer.oncanplay = function () {
+                console.log("can_Play")
+                if (!isvideo) {
+                    audioplayer.play()
+                }
+            }
+            audioplayer.onended = function () {
+                console.log("play end")
+                audioplayer.pause()
+                if (isvideo) {
+                    videoplayer.pause()
+                }
+                changesong("Next")
+            };
+            videoplayer.oncanplaythrough = function () {
+                console.log("------video play----------", callpause, mediainterval)
+                if (mediainterval == undefined && !callpause) {
+                    console.log("------video play----------")
+                    videoplayer.play()
+                    audioplayer.play()
+                    interval_btn.click()
+                    //interval_func()
+                } else if (audioplayer.paused) {
+                    videoplayer.play()
+                    audioplayer.play()
+                }
+            }
+            function interval_func() {
+                console.log("------test function--------")
+                //if(isvideo)
+                mediainterval = setInterval(alertFunc, 5000);
+            }
+            function alertFunc() {
+                console.log("alert function")
+                if (Math.floor(videoplayer.currentTime * 100) / 100 < Math.floor(audioplayer.currentTime *
+                    100) / 100 - 4) {
+                    videoplayer.currentTime = audioplayer.currentTime
+                    if (!document.hidden) {
+                        console.log("alert")
+                        audioplayer.pause()
+                    }
+                    videoplayer.pause()
+                } else if (Math.floor(videoplayer.currentTime * 100) / 100 < Math.floor(audioplayer
+                        .currentTime * 100) / 100 ||
+                    Math.floor(audioplayer.currentTime * 100) / 100 +0.1 < Math.floor(videoplayer.currentTime *
+                    100) / 100) {
+                    //videoplayer.currentTime=audioplayer.currentTime    
+                    videoplayer.currentTime = audioplayer.currentTime + 0.05
+                    console.log("修正", videoplayer.currentTime, audioplayer.currentTime)
+                }
+            }
+
+            document.addEventListener("visibilitychange", function () {
+                if (mediainterval != undefined) {
+                    clearInterval(mediainterval)
+                }
+                if (document.hidden) {
+                    if (mediainterval != undefined) {
+                        clearInterval(mediainterval)
+                    }
+                } else if (isvideo && videoplayer.paused && !audioplayer.paused) {
+                    console.log("--------------------------");
+                    audioplayer.pause()
+                    videoplayer.currentTime = audioplayer.currentTime
+                    interval_btn.click()
+                }
+                console.log(document.hidden, document.visibilityState);
+            }, false);
+            $('#opd').on('click', function () {
+                console.log("press")
+                changesong("Next")
+            })
+            $('#speakb').on('click', function () {
+                console.log("changesong")
+                changesong($('#speak').val())
+            })
+            $('#xxx').on('click', function () {
+                if (!isvideo) {
+                    if (audioplayer.paused) {
+                        audioplayer.play()
+                    } else {
+                        audioplayer.pause()
+                    }
+                } else {
+                    if (audioplayer.paused) {
+                        audioplayer.play()
+                        videoplayer.play()
+
+                    } else {
+                        audioplayer.pause()
+                        videoplayer.pause()
+                    }
+                }
+            })
+        });
+
+    </script>
+</body>
+
+</html>

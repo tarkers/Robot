@@ -1,0 +1,7 @@
+setup.py
+ROBOT/__init__.py
+ROBOT.egg-info/PKG-INFO
+ROBOT.egg-info/SOURCES.txt
+ROBOT.egg-info/dependency_links.txt
+ROBOT.egg-info/requires.txt
+ROBOT.egg-info/top_level.txt
