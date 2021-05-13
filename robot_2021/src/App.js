@@ -1,18 +1,34 @@
 //import './css/App.css';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
-import { Jumbotron, Container, Button } from 'react-bootstrap'
-import { useState, useEffect } from 'react'
+import { Container, Button } from 'react-bootstrap'
+import { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
+import Message from './component/Message'
 import Voice from './routes/Voice'
-function App() {
-  const [test, setTest] = useState("test")
-  useEffect(() => {
+import Robot from './component/Robot'
+import MusicFrame from './component/MusicFrame'
+import RobotFace from './component/RobotFace'
 
-  }, [test])
+function App() {
+  const [playing, setPlaying] = useState(false)
+  const [robotshow, setRobotShow] = useState(true)
+  // const [robotspeak, setRobotSpeak] = useState({})
+  const [musicdata, setMusicdata] = useState(null)
+  const [volume, setVolume] = useState(0.5)
+  const lastVolume = useRef(0.5)
+  useEffect(() => {
+    playing ? setRobotShow(false) : setRobotShow(true)
+  }, [playing])
+  const givGrade=async()=>{
+    console.log("give grade")
+    const res =await axios.get('/give_grade')
+    console.log(res.data)
+  }
   // get the person needs song
-  const changeSong = async () => {
+  const changeSong = async (data, is_artist) => {
     const res = await axios.post('/music/change_song', {
-      "song": "阿拉斯加海灣",
+      "song": data,
+      "is_artist": is_artist
     }, {
       headers: {
         'Content-Type': 'application/json',
@@ -20,24 +36,94 @@ function App() {
         'Access-Control-Allow-Origin': '*'
       }
     })
-    setTest(res.data.song)
-    console.log(res.data.song)
+    res.data['date'] = new Date().toLocaleString()
+    console.log(res.data)
+    if (res.data.noError) {
+      setMusicdata(res.data)
+      setPlaying(true)
+      //preload the songlist
+      if (res.data.queueLen < 2) {
+        preloadSongs()
+      }
+    } else {
+      // window.responsiveVoice.speak("抱歉，找不到您的歌", "Chinese Taiwan Male");
+    }
+
   }
   //preload the song
   const preloadSongs = async () => {
     const res = await axios.get('/music/preload_songs')
-    console.log(res)
+    console.log(res, "Preload OK!")
   }
+  const setResponse = (message) => {
+    switch (message.label) {
+      case "PlayArtist":
+        changeSong(message.data, true)
+        window.responsiveVoice.speak(message.text, "Chinese Taiwan Male", { onend: () => setVolume(lastVolume.current) });
+        break;
+      case "PlaySong":
+      case "Next":
+        changeSong(message.data, false)
+        window.responsiveVoice.speak(message.text, "Chinese Taiwan Male", { onend: () => setVolume(lastVolume.current) });
+        break;
+      case "H_Volume":
+      case "L_Volume":
+      case "Set_Volume":
+        window.responsiveVoice.speak(message.text, "Chinese Taiwan Male", { onend: () => setVolume(message.data) });
+        break
+      case "Get_Volume":
+        window.responsiveVoice.speak(message.text, "Chinese Taiwan Male", { onend: () => setVolume(lastVolume.current) });
+        break
+      case "Stop":
+      case "Continue":
+        if (musicdata == null) {
+          window.responsiveVoice.speak("請選擇歌曲", "Chinese Taiwan Male", { onend: () => setVolume(lastVolume.current) });
+        } else {
+          setPlaying(message.data)
+        }
+        setVolume(lastVolume.current)
+        break
+      case "Replay":
+        setMusicdata({ ...musicdata, date: new Date().toLocaleString(), replay: true })
+        setVolume(lastVolume.current)
+        break
+      case "Robot":
+        if (volume != 0.15) {
+          lastVolume.current = volume
+          setVolume(0.15)
+        }
+        window.responsiveVoice.speak(message.text, "Chinese Taiwan Male");
+        break
+      case "No_Speak":
+        setVolume(lastVolume.current)
+        break
+      case "Exit":
+        setPlaying(false)
+        setMusicdata(null)
+        break
+      default:
+        break;
+    }
+  }
+
   return (
     <Router>
-      <Container>
-        <Button onClick={changeSong} variant="primary">{test}</Button>
-        <Button onClick={preloadSongs} variant="primary">preload</Button>
-        <div className="App" style={{ padding: '5px' }}>
+      <Container fluid>
+        <Button onClick={()=>givGrade()}>Give the Grade</Button>
+        {robotshow && <RobotFace></RobotFace>}
+        <Robot setResponse={setResponse}></Robot>
+
+        <div style={{ zIndex: -1 }}>
+          {musicdata != null && <MusicFrame musicdata={musicdata} volume={volume} playing={playing} changeSong={changeSong}></MusicFrame>}
+        </div>
+
+        {/* <div className="App" style={{ padding: '5px' }}>
           <Switch>
             <Route path='/voice' component={Voice} />
           </Switch>
-        </div>
+        </div> */}
+
+
       </Container>
     </Router>
   );

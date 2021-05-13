@@ -21,3 +21,9 @@ body { background-color: var(--dark);
 .full-height {
   height: 100%;
 }
+.react-player video {
+  position: relative;
+  left: 0;
+  top: 0;
+  transform: none;
+}

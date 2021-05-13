@@ -55,18 +55,19 @@ def change_song():
     global youtube_search
     try:
        songname = request.get_json()['song']
+       is_artist = request.get_json()['is_artist']
     except KeyError:
        songname = None
        
-    #testcoed
+    #test code
     if songname==None:
         songname="張惠妹的人質"
     if songname!="Next":
         youtube_search.songlist=[]
-        print("clear the song")
-    song,queue_len=youtube_search.songrequire(songname)
+    
+    song,queue_len=youtube_search.songrequire(songname,is_artist)
     print(song)
-    return jsonify(artist=song['artist'], albumimg=song['image'],  song=song['song'], musicurl=song['musicurl'],
-                   album=song['album'], videourl=song['videourl'],queue_len=queue_len)
+    return jsonify(artist=song['artist'], pic=song['pic'],  song=song['song'], url=song['url'],
+                   album=song['album'],queueLen=queue_len,noError=song['no_error'],isVideo=song['is_video'])
 
 
