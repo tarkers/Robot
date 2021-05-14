@@ -13,7 +13,7 @@ const CameraGet = ({ state }) => {
         const answer = res.data.answer
         if (answer != -1) {
           let reply = ""
-          reply = answer < 3 ? `您的評分為:${res.data.answer}。請問您是哪裡不滿意` : `您的評分為:${res.data.answer}。感謝好評`
+          reply = answer < 3 ? `您的評分為:${res.data.answer}分。請問您是哪裡不滿意` : `您的評分為:${res.data.answer}分。感謝好評`
           window.responsiveVoice.speak(reply, "Chinese Taiwan Male");
           setTimeout(function () {
             setOp(false)
@@ -28,24 +28,25 @@ const CameraGet = ({ state }) => {
       }
       receiveGrade()
     }
-    if (state==1 || op ) {
+    if (state == 1 || op) {
       giveGrade()
     }
     console.log(state)
-  }, [op,state])
+  }, [op, state])
 
   return (
-    <div>
-     {op && <img src={'/video_feed'} className="center-screen" alt="Gesture" />} 
-     <Button onClick={() => { setOp(true) }}>評分測試</Button>
-    </div>
-    
+    <> 
+      <div className="float-end">
+        {op && <img src={'/video_feed'} alt="Gesture" />}
+      </div>
+      <Button onClick={() => { setOp(true) }}>評分測試</Button>
+    </>
   )
 }
 CameraGet.state = {
-  state:0
+  state: 0
 }
 CameraGet.prototype = {
-  state:PropTypes.number
+  state: PropTypes.number
 }
 export default CameraGet

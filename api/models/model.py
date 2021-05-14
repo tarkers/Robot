@@ -37,6 +37,7 @@ class Artist(db.Model):
 
 
 class Song(db.Model):
+    __tablename__ = 'song'
     pid = db.Column(db.Integer, primary_key=True)
     cid = db.Column(
         db.String(100),nullable=False)
@@ -110,4 +111,25 @@ class Song(db.Model):
         db_session.commit()
         print("update the album!")
         
+        
+class Opinion(db.Model):
+    __tablename__ = 'opinion'
+    id = db.Column(db.Integer, primary_key=True)
+    songname = db.Column(db.String(50))
+    opnum = db.Column(db.Integer)
+    feeling = db.Column(db.String(50))
+    date = db.Column(db.DateTime)
+    # add the data
+
+    def __init__(self,songname,opnum,feeling):
+        self.songname = songname
+        self.opnum = opnum
+        self.feeling = feeling
+    def add_opinion(self):
+        db.session.add(self)
+        db.session.commit()     
+    @classmethod
+    def get_data(cls,d):
+        data=Opinion.query.all()
+        return data
 

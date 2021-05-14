@@ -9,7 +9,7 @@ import Robot from './component/Robot'
 import CameraGet from './component/CameraGet'
 import MusicFrame from './component/MusicFrame'
 import RobotFace from './component/RobotFace'
-
+import Chart from './routes/Charts'
 function App() {
   const [playing, setPlaying] = useState(false)
   const [robotshow, setRobotShow] = useState(true)
@@ -34,7 +34,7 @@ function App() {
     })
     res.data['date'] = new Date().toLocaleString()
     console.log(res.data)
-    if (res.data.noError) {
+    if (res.data.speak == undefined) {
       setMusicdata(res.data)
       setPlaying(true)
       //preload the songlist
@@ -42,11 +42,11 @@ function App() {
         preloadSongs()
       }
     } else {
-      // window.responsiveVoice.speak("抱歉，找不到您的歌", "Chinese Taiwan Male");
+      window.responsiveVoice.speak(res.data.speak, "Chinese Taiwan Male");
     }
 
   }
-  const handleVolume=(v)=>{
+  const handleVolume = (v) => {
     setVolume(v)
   }
   //preload the song
@@ -67,7 +67,7 @@ function App() {
       case "Stop":
       case "Continue":
         if (musicdata == null) {
-          window.responsiveVoice.speak("請選擇歌曲", "Chinese Taiwan Male", { onend: () => setVolume(lastVolume.current)});
+          window.responsiveVoice.speak("請選擇歌曲", "Chinese Taiwan Male", { onend: () => setVolume(lastVolume.current) });
         } else {
           setPlaying(message.data)
         }
@@ -87,17 +87,19 @@ function App() {
   return (
     <Router>
       <Container fluid>
-        {robotshow && <RobotFace></RobotFace>}
+        {/* {robotshow && <RobotFace></RobotFace>}
         <Robot setResponse={setResponse} handleVolume={handleVolume}></Robot>
         <div style={{ zIndex: -1 }}>
           {musicdata != null && <MusicFrame musicdata={musicdata} volume={volume} playing={playing} changeSong={changeSong}></MusicFrame>}
           <CameraGet></CameraGet>
         </div>
         <div className="App" style={{ padding: '5px' }}>
-          <Switch>
-            <Route path='/voice' component={Voice} />
-          </Switch>
-        </div>
+        </div> */}
+        <Switch>
+          <Route path='/voice' component={Voice} />
+          <Route  path='/chart' component={Chart} />
+        </Switch>
+
       </Container>
     </Router>
   );

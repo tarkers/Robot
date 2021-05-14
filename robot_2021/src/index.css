@@ -27,3 +27,6 @@ body { background-color: var(--dark);
   top: 0;
   transform: none;
 }
+h1 {
+  color: #ffffff;
+}

@@ -487,7 +487,10 @@ class Musicsearch:
         data = None
         # play the next song
         if "Next" in speak_words: #songlist aussume >0
-            data = self.songlist.pop()
+            try:
+                data = self.songlist.pop()
+            except IndexError:
+                return "已播放完畢"
         # play the whole artist
         elif isartist:
             artist_songs = Song.get_singer_song(speak_words)
@@ -512,15 +515,17 @@ class Musicsearch:
             song = Musicsearch.get_song(self.nowsong)
         
         song['url'] = self.url
-        song['no_error']=noerror
-        if "https://www.youtube.com/" in song['url']:
+        if not noerror:
+            return "找不到歌曲"      
+        elif "https://www.youtube.com/" in song['url']:
             song['is_video']=True
         else:
             song['is_video']=False
         if  'googleusercontent' in song['pic']:
             song['pic'] = re.sub(
                 r'=w(.*?)-h(.*?)-', '=w600-h600-', song['pic'])
-        return song, len(self.songlist)
+        song['queue_len']=len(self.songlist)
+        return song
 
     @classmethod
     def get_song(cls, data):

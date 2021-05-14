@@ -16,7 +16,6 @@ def get_current_time():
 @app.route('/give_grade',methods=['GET'])
 def give_grade():
     answer =get_answer()
-    print("answer: ",answer)
     return jsonify(answer=answer)
 
 @app.route('/video_feed')

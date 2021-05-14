@@ -65,9 +65,11 @@ def change_song():
     if songname!="Next":
         youtube_search.songlist=[]
     
-    song,queue_len=youtube_search.songrequire(songname,is_artist)
-    print(song)
-    return jsonify(artist=song['artist'], pic=song['pic'],  song=song['song'], url=song['url'],
-                   album=song['album'],queueLen=queue_len,noError=song['no_error'],isVideo=song['is_video'])
+    song=youtube_search.songrequire(songname,is_artist)
+    if type(song) == str:
+      return jsonify(speak=song)
+    else:
+        return jsonify(artist=song['artist'], pic=song['pic'],  song=song['song'], url=song['url'],
+                   album=song['album'],queueLen=song['queue_len'],isVideo=song['is_video'])
 
 
