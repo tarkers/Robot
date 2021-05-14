@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { Button } from 'react-bootstrap'
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition'
 import Message from './Message'
-const Robot = ({ setResponse }) => {
+const Robot = ({ setResponse,handleVolume}) => {
   const volumeRef = useRef(0.5)
   const robotCall = useRef(false)
+  const nowLabel = useRef(null)
   const timeoutPointer = useRef(null)
   const [userspeak, setuserSpeak] = useState({
     name: "User",
@@ -105,27 +107,25 @@ const Robot = ({ setResponse }) => {
       resetTranscript()
       timeoutPointer.current = null
       buildMessage({ text: ``, index: 12, label: "No_Speak" })
+      handleVolume(volumeRef.current)
     }, 8000)
   }
   const buildMessage = (message) => {
+    nowLabel.current=message.label
     if (timeoutPointer.current) {
       clearTimeout(timeoutPointer.current)
     }
     if (message.label == "Robot") {
       robotCall.current = true
-      setuserSpeak({ name: "User", person: 'remote', words: "電腦", })
+      setuserSpeak({ name: "User", person: 'remote', words: "電腦" })
       setResponse(message, "電腦")
-      setRobotSpeak({name: "Robot",  person: 'local',words: message.text,})
+      setRobotSpeak({name: "Robot",  person: 'local',words: message.text})
       responsePeriod()
     } else if (robotCall.current) {
       robotCall.current = false
-      setuserSpeak({
-        name: "User",
-        person: 'remote',
-        words: finalTranscript,
-      })
+      setuserSpeak({ name: "User",  person: 'remote',words: finalTranscript})
       setResponse(message)
-      setRobotSpeak({name: "Robot",person: 'local',words: message.text,  })
+      setRobotSpeak({name: "Robot",person: 'local',words: message.text})
     }
     resetTranscript()
   }
@@ -135,10 +135,14 @@ const Robot = ({ setResponse }) => {
   if (!SpeechRecognition.browserSupportsSpeechRecognition()) {
     return null
   }
+  const getEnd=()=>{
+    console.log(nowLabel.current,volumeRef.current,"getend")
+    nowLabel.current=="Robot"?handleVolume(0.15):handleVolume(volumeRef.current)
+  }
   return (
     <div>
       <Message speak={userspeak}></Message>
-      <Message speak={robotspeak}></Message>
+      <Message speak={robotspeak} handleEnd={getEnd}></Message>
     </div>
   )
 }

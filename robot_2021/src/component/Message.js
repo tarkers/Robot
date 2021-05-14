@@ -1,15 +1,24 @@
-import React from 'react'
+import React , { useState, useEffect }  from 'react'
 import '../css/type.css'
 import PropTypes from 'prop-types'
-import { useState, useEffect, useRef } from 'react'
-import { useSpring, animated, useTransition, config, to } from 'react-spring'
-import styled, { keyframes } from "styled-components";
+import { useSpring, animated } from 'react-spring'
 import robotFace from '../img/robotFace.png'
-const Message = ({ speak }) => {
+const Message = ({ speak, handleEnd }) => {
     const [show, setShow] = useState(true)
     useEffect(() => {
         if (!show) {
             setShow(true)
+        }
+        //test computer code
+        if (speak.person == "local") {
+            if (speak.words == "電腦") {
+                window.responsiveVoice.speak(speak.words, "Chinese Taiwan Male", { onend: () => handleEnd() });
+            } else if (speak.words == "") {
+                handleEnd()
+            }
+            else {
+                window.responsiveVoice.speak(speak.words, "Chinese Taiwan Male", { onstart: () => handleEnd() });
+            }
         }
     }, [speak])
     const MesAnime = () => {
@@ -32,7 +41,7 @@ const Message = ({ speak }) => {
             <animated.div style={show ? showUp : vanishAway} className={`user px-2 ${speak.person}`}>
                 <div className="avatar">
                     <div className="pic">
-                       {speak.person=="remote"? <img src="https://picsum.photos/100/100?random=16" />: <img src={robotFace}/>}
+                        {speak.person == "remote" ? <img src="https://picsum.photos/100/100?random=16" /> : <img src={robotFace} />}
                     </div>
                     <div className="name pt-1">{speak.name}</div>
                 </div>

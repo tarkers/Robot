@@ -19,19 +19,19 @@ const MusicFrame = ({ musicdata, volume, playing, changeSong }) => {
             <label style={{ fontSize: "28px" }} >{musicdata.song} - {musicdata.artist}</label>
         </div>
     )
-    useEffect(() => {
-        musicdata.isVideo == true ? setPlayerdata({
-            url: musicdata.url,
-            isVideo: true
-        }) : setPlayerdata({
-            url: musicdata.url,
-            isVideo: false
-        })
-    }, [musicdata])
+    // useEffect(() => {
+    //     musicdata.isVideo == true ? setPlayerdata({
+    //         url: musicdata.url,
+    //         isVideo: true
+    //     }) : setPlayerdata({
+    //         url: musicdata.url,
+    //         isVideo: false
+    //     })
+    // }, [musicdata])
     return (
 
         <div className='center-screen music-frame'>
-            <VideoPlayer data={playerdata} volume={volume} playing={playing} changeSong={changeSong}></VideoPlayer>
+            <VideoPlayer data={musicdata} volume={volume} playing={playing} changeSong={changeSong}></VideoPlayer>
             {musicdata.url != null && <>{musicdata.isVideo ? video_div : audio_div}</>}
         </div>
 

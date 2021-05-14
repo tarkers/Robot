@@ -7,7 +7,7 @@ const VideoPlayer = ({ data, volume, playing, changeSong }) => {
     const [height, setHeight] = useState('950px')
     const playerRef = useRef(null)
     useEffect(() => {
-        // console.log(data, "check")
+        console.log(data, "check")
         if (!data.isVideo) {
             setHeight("0px")
             setWidth("0px")
@@ -16,6 +16,7 @@ const VideoPlayer = ({ data, volume, playing, changeSong }) => {
             setWidth("1800px")
         }
         if ("replay" in data) {
+            console.log("-----")
             playerRef.current.seekTo(parseFloat(0))
         }
     }, [data])

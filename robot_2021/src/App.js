@@ -6,24 +6,20 @@ import axios from 'axios'
 import Message from './component/Message'
 import Voice from './routes/Voice'
 import Robot from './component/Robot'
+import CameraGet from './component/CameraGet'
 import MusicFrame from './component/MusicFrame'
 import RobotFace from './component/RobotFace'
 
 function App() {
   const [playing, setPlaying] = useState(false)
   const [robotshow, setRobotShow] = useState(true)
-  // const [robotspeak, setRobotSpeak] = useState({})
+  const [state, setstate] = useState(0)
   const [musicdata, setMusicdata] = useState(null)
   const [volume, setVolume] = useState(0.5)
   const lastVolume = useRef(0.5)
   useEffect(() => {
     playing ? setRobotShow(false) : setRobotShow(true)
   }, [playing])
-  const givGrade=async()=>{
-    console.log("give grade")
-    const res =await axios.get('/give_grade')
-    console.log(res.data)
-  }
   // get the person needs song
   const changeSong = async (data, is_artist) => {
     const res = await axios.post('/music/change_song', {
@@ -50,52 +46,35 @@ function App() {
     }
 
   }
+  const handleVolume=(v)=>{
+    setVolume(v)
+  }
   //preload the song
   const preloadSongs = async () => {
     const res = await axios.get('/music/preload_songs')
-    console.log(res, "Preload OK!")
+    console.log("---Preload OK!---")
   }
   const setResponse = (message) => {
+    console.log(message)
     switch (message.label) {
       case "PlayArtist":
         changeSong(message.data, true)
-        window.responsiveVoice.speak(message.text, "Chinese Taiwan Male", { onend: () => setVolume(lastVolume.current) });
         break;
       case "PlaySong":
       case "Next":
         changeSong(message.data, false)
-        window.responsiveVoice.speak(message.text, "Chinese Taiwan Male", { onend: () => setVolume(lastVolume.current) });
         break;
-      case "H_Volume":
-      case "L_Volume":
-      case "Set_Volume":
-        window.responsiveVoice.speak(message.text, "Chinese Taiwan Male", { onend: () => setVolume(message.data) });
-        break
-      case "Get_Volume":
-        window.responsiveVoice.speak(message.text, "Chinese Taiwan Male", { onend: () => setVolume(lastVolume.current) });
-        break
       case "Stop":
       case "Continue":
         if (musicdata == null) {
-          window.responsiveVoice.speak("請選擇歌曲", "Chinese Taiwan Male", { onend: () => setVolume(lastVolume.current) });
+          window.responsiveVoice.speak("請選擇歌曲", "Chinese Taiwan Male", { onend: () => setVolume(lastVolume.current)});
         } else {
           setPlaying(message.data)
         }
-        setVolume(lastVolume.current)
         break
       case "Replay":
+        console.log("replay")
         setMusicdata({ ...musicdata, date: new Date().toLocaleString(), replay: true })
-        setVolume(lastVolume.current)
-        break
-      case "Robot":
-        if (volume != 0.15) {
-          lastVolume.current = volume
-          setVolume(0.15)
-        }
-        window.responsiveVoice.speak(message.text, "Chinese Taiwan Male");
-        break
-      case "No_Speak":
-        setVolume(lastVolume.current)
         break
       case "Exit":
         setPlaying(false)
@@ -105,25 +84,20 @@ function App() {
         break;
     }
   }
-
   return (
     <Router>
       <Container fluid>
-        <Button onClick={()=>givGrade()}>Give the Grade</Button>
         {robotshow && <RobotFace></RobotFace>}
-        <Robot setResponse={setResponse}></Robot>
-
+        <Robot setResponse={setResponse} handleVolume={handleVolume}></Robot>
         <div style={{ zIndex: -1 }}>
           {musicdata != null && <MusicFrame musicdata={musicdata} volume={volume} playing={playing} changeSong={changeSong}></MusicFrame>}
+          <CameraGet></CameraGet>
         </div>
-
-        {/* <div className="App" style={{ padding: '5px' }}>
+        <div className="App" style={{ padding: '5px' }}>
           <Switch>
             <Route path='/voice' component={Voice} />
           </Switch>
-        </div> */}
-
-
+        </div>
       </Container>
     </Router>
   );
