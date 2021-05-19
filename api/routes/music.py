@@ -18,29 +18,6 @@ def main():
 
 
 
-# @music.route('/', methods=['GET', 'POST'])
-# def main():
-#     global youtube_search
-#     # music_search=Musicsearch()
-#     songname=request.values.get('speak')
-#     if songname==None:
-#         songname="張惠妹的人質"
-#     print(songname)
-#     song,queue_len=youtube_search.songrequire(songname)
-#     print(song)
-   
-#     return render_template('music.html', artist=song['artist'], albumimg=song['image'], song=song['song'],\
-#         musicurl=song['musicurl'],album=song['album'],videourl=song['videourl'],queue_len=queue_len)
-
-# @music.route('/_get_reply')
-# def get_reply():
-#     print("add number")
-#     speak=request.args.get("speak")
-#     # result=words_reply("聽周杰倫的擱淺")
-#     # result=words_reply("暫停播放周杰倫的擱淺")
-#     result=words_reply(speak)
-#     return jsonify(result=result)
-
 
 @music.route('/preload_songs',methods=['GET'])
 def preload_songs():

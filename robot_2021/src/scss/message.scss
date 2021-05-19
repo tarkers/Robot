@@ -1,0 +1,74 @@
+.dialogue {
+    width: 600px;
+    padding: 20px;
+    box-shadow: 0 0 10px #000;
+    background-color: #f4f5f7;
+    border-radius: 20px;
+}
+
+.user {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    .avatar {
+        width: 60px;
+        text-align: center;
+        flex-shrink: 0;
+    }
+    .pic {
+        border-radius: 50%;
+        overflow: hidden;
+        img {
+            width: 100%;
+            vertical-align: middle;
+        }
+    }
+    .name {
+        color: rgb(255, 255, 255);
+    }
+    .text {
+        background-color: rgba(170, 170, 170, 0);
+        padding: 16px;
+        border-radius: 20px;
+        border-color: #eee;
+        border-width: 3px;
+        border-style: solid;
+        position: relative;
+    }
+    
+}
+
+.remote .text {
+    margin-left: 20px;
+    margin-right: 80px;
+    color: #eee;
+    border-width: 3px;
+    border-style: dashed;
+    background-color: #4179f1;
+    &::before {
+        border-right: 10px solid #4179f1;
+        left: -50px;
+    }
+}
+
+.local {
+    justify-content: flex-end;
+    .text {
+        margin-right: 20px;
+        margin-left: 80px;
+        order: -1;
+        color: #eee;
+        border-width: 3px;
+        border-style: dashed;
+        background-color: rgb(197, 9, 9);
+        color: #333;
+    }
+}
+
+/* font and frame shadow */
+.remote .text,
+.local .text {
+    font-size: 28px;
+    color: white;
+    box-shadow: 5px 5px 5px rgb(153, 142, 142);
+}

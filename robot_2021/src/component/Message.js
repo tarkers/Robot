@@ -1,5 +1,5 @@
 import React , { useState, useEffect }  from 'react'
-import '../css/type.css'
+import '../scss/message.scss'
 import PropTypes from 'prop-types'
 import { useSpring, animated } from 'react-spring'
 import robotFace from '../img/robotFace.png'
@@ -12,12 +12,12 @@ const Message = ({ speak, handleEnd }) => {
         //test computer code
         if (speak.person == "local") {
             if (speak.words == "電腦") {
-                window.responsiveVoice.speak(speak.words, "Chinese Taiwan Male", { onend: () => handleEnd() });
+                window.responsiveVoice.speak(speak.words, "Chinese Taiwan Male", { onstart: () => handleEnd() });
             } else if (speak.words == "") {
                 handleEnd()
             }
             else {
-                window.responsiveVoice.speak(speak.words, "Chinese Taiwan Male", { onstart: () => handleEnd() });
+                window.responsiveVoice.speak(speak.words, "Chinese Taiwan Male", { onend: () => handleEnd() });
             }
         }
     }, [speak])

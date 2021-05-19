@@ -53,7 +53,7 @@ def chrome_login():
 
 
 driver = chrome_login()
-
+second_driver=chrome_login()
 
 class Musicsearch:
     headers = {
@@ -355,7 +355,8 @@ class Musicsearch:
             return self.get_link()  # get the link data
 
     def get_songqueue(self):
-        global driver
+        global second_driver
+
         self.songlist = []
         url = "https://music.youtube.com/watch?v="+self.nowsong['sid']
         if self.pid != "":
@@ -364,23 +365,23 @@ class Musicsearch:
             url = "https://music.youtube.com/watch?v=" + \
                 self.nowsong['sid']+"&list="+self.pid
         print(url, "-------song queue---------------")
-        driver.get(url)
-        wait = WebDriverWait(driver, 30)
+        second_driver.get(url)
+        wait = WebDriverWait(second_driver, 30)
         element = wait.until(EC.visibility_of_all_elements_located(
             (By.XPATH, '//*[@id="tab-renderer"]')))
-        randomicon = driver.find_element_by_xpath(
+        randomicon = second_driver.find_element_by_xpath(
             '//*[@id="right-controls"]/div/tp-yt-paper-icon-button[3]')
         randomicon.click()
         time.sleep(0.5)
         tmp = element[0]  # need to check if element is null
         for i in range(0, 3):
-            driver.execute_script('arguments[0].scrollTop = '+str(i*500), tmp)
+            second_driver.execute_script('arguments[0].scrollTop = '+str(i*500), tmp)
             time.sleep(0.8)
-        playicon = driver.find_element_by_xpath('//*[@id="play-pause-button"]')
+        playicon = second_driver.find_element_by_xpath('//*[@id="play-pause-button"]')
         print(playicon.get_attribute('title'), "the play button")
         if playicon.get_attribute("title") == "暫停":
             playicon.click()
-        content = driver.page_source
+        content = second_driver.page_source
         soup = BeautifulSoup(content, "html.parser")
         queue = soup.findAll('ytmusic-player-queue-item',
                              class_="style-scope ytmusic-player-queue")
@@ -402,7 +403,7 @@ class Musicsearch:
             wholedata.append(data)
         if not isvideo:  # music id
             io = []
-            ids = driver.find_elements_by_xpath('//*[@id="play-button"]')
+            ids = second_driver.find_elements_by_xpath('//*[@id="play-button"]')
             for ww in ids:
                 opop = ww.get_property(
                     'data')['playNavigationEndpoint']['watchEndpoint']['videoId']
@@ -461,7 +462,7 @@ class Musicsearch:
             else:
                 self.songlist.append(Song(
                     da['cid'], da['cname'], da['sid'], da['sname'], da['pic'], da['aid'], da['aname']))
-        playicon = driver.find_element_by_xpath('//*[@id="play-pause-button"]')
+        playicon = second_driver.find_element_by_xpath('//*[@id="play-pause-button"]')
         if playicon.get_attribute("title") == "暫停":
             print("---still playing----")
             playicon.click()

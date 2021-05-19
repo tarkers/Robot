@@ -103,8 +103,8 @@ const Robot = ({ setResponse,handleVolume}) => {
 
   const responsePeriod = () => {
     timeoutPointer.current = setTimeout(() => {
-      clearTimeout(timeoutPointer.current)
       resetTranscript()
+      clearTimeout(timeoutPointer.current)
       timeoutPointer.current = null
       buildMessage({ text: ``, index: 12, label: "No_Speak" })
       handleVolume(volumeRef.current)
@@ -120,6 +120,7 @@ const Robot = ({ setResponse,handleVolume}) => {
       setuserSpeak({ name: "User", person: 'remote', words: "電腦" })
       setResponse(message, "電腦")
       setRobotSpeak({name: "Robot",  person: 'local',words: message.text})
+      resetTranscript()
       responsePeriod()
     } else if (robotCall.current) {
       robotCall.current = false

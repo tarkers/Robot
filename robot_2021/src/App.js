@@ -13,7 +13,6 @@ import Chart from './routes/Charts'
 function App() {
   const [playing, setPlaying] = useState(false)
   const [robotshow, setRobotShow] = useState(true)
-  const [state, setstate] = useState(0)
   const [musicdata, setMusicdata] = useState(null)
   const [volume, setVolume] = useState(0.5)
   const lastVolume = useRef(0.5)
@@ -66,7 +65,7 @@ function App() {
         break;
       case "Stop":
       case "Continue":
-        if (musicdata == null) {
+        if (musicdata == null || musicdata.queueLen==0 && message.label=="Continue") {
           window.responsiveVoice.speak("請選擇歌曲", "Chinese Taiwan Male", { onend: () => setVolume(lastVolume.current) });
         } else {
           setPlaying(message.data)
@@ -87,14 +86,15 @@ function App() {
   return (
     <Router>
       <Container fluid>
-        {/* {robotshow && <RobotFace></RobotFace>}
+        {robotshow && <RobotFace></RobotFace>}
+        <CameraGet></CameraGet>
         <Robot setResponse={setResponse} handleVolume={handleVolume}></Robot>
         <div style={{ zIndex: -1 }}>
           {musicdata != null && <MusicFrame musicdata={musicdata} volume={volume} playing={playing} changeSong={changeSong}></MusicFrame>}
-          <CameraGet></CameraGet>
+          
         </div>
         <div className="App" style={{ padding: '5px' }}>
-        </div> */}
+        </div>
         <Switch>
           <Route path='/voice' component={Voice} />
           <Route  path='/chart' component={Chart} />

@@ -7,7 +7,7 @@ const VideoPlayer = ({ data, volume, playing, changeSong }) => {
     const [height, setHeight] = useState('950px')
     const playerRef = useRef(null)
     useEffect(() => {
-        console.log(data, "check")
+        console.log(volume, "check")
         if (!data.isVideo) {
             setHeight("0px")
             setWidth("0px")
